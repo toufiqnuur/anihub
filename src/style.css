@@ -1,0 +1,17 @@
+body {
+  font-family: 'Plus Jakarta Display', sans-serif;
+}
+.navbar,
+.navbar a {
+  margin-bottom: 1.625rem;
+}
+.navbar form {
+  height: 3.25rem;
+  bottom: -1.625rem;
+}
+.navbar form input {
+  outline: none;
+}
+.navbar form [type="submit"]:active {
+  border-color: rgb(255,193,7)!important;
+}

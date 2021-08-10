@@ -1,6 +1,6 @@
-import './Card'
-import './Modal'
 import { Modal } from 'bootstrap'
+import './CardItem.js'
+import './ModalDetail.js'
 
 class CardGroup extends HTMLElement {
   connectedCallback(){
@@ -8,29 +8,43 @@ class CardGroup extends HTMLElement {
     this.expand = this.getAttribute('expand')
     this.render()
   }
+  
   set bind(data) {
     this.data = data
     this.render()
   }
+  
   render() {
     this.innerHTML = `
       <h3 class="mb-3">${this.title}</h3>
       <div class="row ${this.expand === 'horizontal' ? 'gx-3 flex-nowrap overflow-auto' : 'g-3'} mb-4"></div>
-      <modal-details></modal-details>
     `
-    
-    this.data.forEach((data, index) => {
+    this.renderCards(this.data)
+    this.setCardsEventClick()
+  }
+  
+  renderCards(data) {
+    const cardGroup = this.querySelector('.row')
+    data.forEach((data, index) => {
       const cardItem = document.createElement('card-item')
       cardItem.setAttribute('class','col-6 col-md-2')
       cardItem.setAttribute('id', index)
       cardItem.bind = data
-      this.querySelector('.row').appendChild(cardItem)
+      cardGroup.appendChild(cardItem)
     })
-    
-    this.querySelectorAll('card-item').forEach(item => {
-      item.onclick = (e) => {
-        this.querySelector('modal-details').bind = this.data[+e.target.id]
-        new Modal(this.querySelector('.modal')).show()
+  }
+  
+  setCardsEventClick() {
+    const cardItems = this.querySelectorAll('card-item')
+    let modalDetails = null
+    cardItems.forEach(card => {
+      card.onclick = () => {
+        if(modalDetails) modalDetails.remove()
+        const newModalDetails = document.createElement('modal-detail')
+        newModalDetails.bind = this.data[+card.id]
+        this.appendChild(newModalDetails)
+        modalDetails = this.querySelector('.modal')
+        new Modal(modalDetails).show()
       }
     })
   }

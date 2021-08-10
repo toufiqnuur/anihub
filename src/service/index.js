@@ -7,7 +7,7 @@ const api = {
     return _axios.get(`anime?filter[text]=${q}`)
   },
   trending: _axios.get('trending/anime'),
-  airing: _axios.get('anime?filter[status]=current&sort=-userCout'),
+  airing: _axios.get('anime?filter[status]=current&sort=-userCount'),
   upcoming: _axios.get('anime?filter[status]=upcoming&sort=-userCount'),
   best: _axios.get('anime?sort=-averageRating'),
   popular: _axios.get('anime?sort=-userCount')

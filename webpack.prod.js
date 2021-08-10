@@ -1,5 +1,6 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require("terser-webpack-plugin")
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const { merge } = require('webpack-merge')
 const common = require('./webpack.common')
 
@@ -18,7 +19,10 @@ module.exports = merge(common, {
       }
     ]
   },
-  plugins: [new MiniCssExtractPlugin()],
+  plugins: [
+    new MiniCssExtractPlugin(),
+    new CleanWebpackPlugin()
+  ],
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin()],

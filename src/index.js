@@ -1,61 +1,61 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style.css'
-import './component/AppBar'
-import './component/Card'
-import './component/CardGroup'
-import './component/Loading'
+import './component/AppBar.js'
+import './component/CardGroup.js'
+import './component/TextLoading.js'
 import api from './service'
+import axios from 'axios'
 
-const form = E('form')
-const query= E('input')[0]
-const view = E('main')
-
-api.trending.then(res => {
-  const list = newCard('Trending', 'horizontal', res.data.data)
-  view.appendChild(list)
-})
-api.airing.then(res => {
-  const list = newCard('Top Airing', 'horizontal', res.data.data)
-  view.appendChild(list)
-})
-api.upcoming.then(res => {
-  const list = newCard('Top upcoming', 'horizontal', res.data.data)
-  view.appendChild(list)
-})
-api.best.then(res => {
-  const list = newCard('Highest Rated', 'horizontal', res.data.data)
-  view.appendChild(list)
-})
-api.popular.then(res => {
-  const list = newCard('Most Popular', 'horizontal', res.data.data)
-  view.appendChild(list)
-})
- 
-form.onsubmit = (e) => {
-  e.preventDefault()
-  query.blur()
-  if(query.value) {
-    view.innerHTML = ''
-    const isLoading = document.createElement('is-loading')
-    view.appendChild(isLoading)
-  
-    api.search(query.value).then(res => {
-      const list = newCard(`Results for "${query.value}"`, 'vertikal', res.data.data)
-      view.appendChild(list)
-      E('is-loading').remove()
-    })
-  }
-}
-
-function E(e) {
+const $ = (e) => {
   e = document.querySelectorAll(e)
   return e.length > 1 ? e : e[0]
 }
 
-function newCard(a, b, c) {
-  const e = document.createElement('card-group')
-  e.setAttribute('title', a)
-  e.setAttribute('expand', b)
-  e.bind = c
-  return e
+const newCardGroup = ({title, expand, data}) => {
+  const cardGroup = document.createElement('card-group')
+  cardGroup.setAttribute('title', title)
+  cardGroup.setAttribute('expand', expand)
+  cardGroup.bind = data
+  return cardGroup
 }
+
+const searchForm = $('form')
+const searchInput = $('input')[0]
+const view = $('main')
+
+searchForm.onsubmit = (event) => {
+  event.preventDefault()
+  searchInput.blur()
+  if(searchInput.value) {
+    view.innerHTML = ''
+    const loading = document.createElement('text-loading')
+    view.appendChild(loading)
+    api.search(searchInput.value).then(res => {
+      const cardGroup = newCardGroup({
+        title: `Results for "${searchInput.value}"`, 
+        expand: 'vertikal', 
+        data: res.data.data
+      })
+      view.appendChild(cardGroup)
+      $('text-loading').remove()
+    })
+  }
+}
+
+axios.all([
+  api.trending,
+  api.popular,
+  api.upcoming,
+  api.best,
+  api.popular
+]).then((res) => {
+  const groupTitles = ["Trending", "Top Airing", "Top Upcoming", "Highest Rated", "Most Popular"]
+  groupTitles.forEach((title, index) => {
+    const cardGroup = newCardGroup({
+      title, 
+      expand: 'horizontal',
+      data: res[index].data.data
+    })
+    view.appendChild(cardGroup)
+  })
+})

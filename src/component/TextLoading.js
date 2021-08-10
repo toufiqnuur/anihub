@@ -1,11 +1,13 @@
-class Loading extends HTMLElement {
+class TextLoading extends HTMLElement {
   constructor() {
     super()
     this.root = this.attachShadow({mode:'open'})
   }
+  
   connectedCallback(){
     this.render()
   }
+  
   render() {
     this.root.innerHTML = `
       <style>
@@ -28,4 +30,4 @@ class Loading extends HTMLElement {
   }
 }
 
-customElements.define('is-loading', Loading)
+customElements.define('text-loading', TextLoading)
